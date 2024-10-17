@@ -1,0 +1,57 @@
+name: CI/CD Pipeline for MERN Todo App
+
+on:
+  push:
+    branches:
+      - main  # Change this to your default branch if it's different
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: [self-hosted, windows]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'  # Specify your Node.js version
+
+    - name: Install client dependencies
+      run: npm install
+      working-directory: ./client
+
+    - name: Run client tests
+      run: npm test
+      working-directory: ./client
+
+    - name: Build the client
+      run: npm run build
+      working-directory: ./client
+
+    - name: Install server dependencies
+      run: npm install
+      working-directory: ./server
+
+    - name: Run server tests
+      run: npm test
+      working-directory: ./server
+
+    - name: Deploy to Local Server
+      run: |
+        # Navigate to the server directory
+        cd ./server
+        # Ensure your server is stopped before starting it again
+        pm2 stop your-app-name || true  # Replace with your actual app name or command
+        # Pull the latest code (if needed)
+        git pull origin main
+        # Install production dependencies
+        npm install --production
+        # Start the server
+        pm2 start your-app-name || npm start  # Replace with your actual start command
+      env:
+        NODE_ENV: production
