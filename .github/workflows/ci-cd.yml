@@ -3,14 +3,14 @@ name: CI/CD Pipeline for MERN Todo App
 on:
   push:
     branches:
-      - main  # Change this to your default branch if it's different
+      - main  # Specify your main branch
   pull_request:
     branches:
-      - main
+      - main  # Specify your main branch
 
 jobs:
   build:
-    runs-on: [self-hosted, windows]
+    runs-on: [self-hosted, windows]  # Use self-hosted runner on Windows
 
     steps:
     - name: Checkout code
@@ -23,35 +23,30 @@ jobs:
 
     - name: Install client dependencies
       run: npm install
-      working-directory: ./client
+      working-directory: ./client  # Navigate to client directory
 
     - name: Run client tests
       run: npm test
-      working-directory: ./client
+      working-directory: ./client  # Navigate to client directory
 
     - name: Build the client
       run: npm run build
-      working-directory: ./client
+      working-directory: ./client  # Navigate to client directory
 
     - name: Install server dependencies
       run: npm install
-      working-directory: ./server
+      working-directory: ./server  # Navigate to server directory
 
     - name: Run server tests
       run: npm test
-      working-directory: ./server
+      working-directory: ./server  # Navigate to server directory
 
     - name: Deploy to Local Server
       run: |
-        # Navigate to the server directory
-        cd ./server
-        # Ensure your server is stopped before starting it again
-        pm2 stop your-app-name || true  # Replace with your actual app name or command
-        # Pull the latest code (if needed)
-        git pull origin main
-        # Install production dependencies
-        npm install --production
-        # Start the server
-        pm2 start your-app-name || npm start  # Replace with your actual start command
+        cd ./server  # Navigate to the server directory
+        pm2 stop your-app-name || true  # Replace with your actual app name
+        git pull origin main  # Pull the latest code
+        npm install --production  # Install production dependencies
+        pm2 start your-app-name || npm start  # Start the server
       env:
         NODE_ENV: production
